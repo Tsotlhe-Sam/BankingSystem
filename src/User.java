@@ -10,9 +10,9 @@ public abstract class User
     private String email;
     private String phoneNumber;
     private String address;
-    private boolean login;
+    private boolean loggedin;
 
-    public User(String userID, String username, String email, String password, String phoneNumber, String address)
+    public User(String userID, String username, String password,String email, String phoneNumber, String address)
     {
         if (username == null || username.isBlank()){
             throw new IllegalArgumentException("Enter Username");
@@ -22,8 +22,8 @@ public abstract class User
         }
         this.userID = userID;
         this.username = username;
-        this.email = email;
         this.passwordHash = hash(password);
+        this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
 
@@ -31,13 +31,13 @@ public abstract class User
     public boolean login(String password)
     {
      boolean ok = passwordHash.equals(hash(password));
-     this.login = ok;
+     this.loggedin = ok;
      return ok;
       }
 
       public void logout()
       {
-          this.login = false;
+          this.loggedin = false;
       }
       public void resetPassword(String newPassword)
       {
@@ -73,7 +73,7 @@ public abstract class User
 
     public boolean isLogin()
     {
-        return login;
+        return loggedin;
     }
 
     // setters
@@ -94,14 +94,14 @@ public abstract class User
     {
      try
      {
-         MessageDigest md = MessageDigest.getInstance("TSO-123");
+         MessageDigest md = MessageDigest.getInstance("SHA-256");
          byte[]bytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
          StringBuilder sb = new StringBuilder();
          for (byte b : bytes) sb.append(String.format("%02x",b));
          return sb.toString();
      } catch(NoSuchAlgorithmException e)
      {
-         throw new IllegalStateException("TSO-123 not available", e);
+         throw new IllegalStateException("SHA-256 not available", e);
      }
      }
 }
