@@ -52,6 +52,12 @@ public abstract class Account
         balance = Math.round((balance - amount) * 100.0) / 100.0;
         transactions.add(new Transaction("withdrawal", amount, "Withdrawal", balance));
     }
+    // only InterestPayment uses this, so there's no "public"
+    void creditInterest(double amount, String paymentID)
+    {
+        balance = Math.round((balance + amount) * 100.0) / 100.0;
+        transactions.add(new Transaction("Interest", amount, "Interest payment " + paymentID, balance));
+    }
 
     // getters
 
