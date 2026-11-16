@@ -71,22 +71,25 @@ public abstract class User
         return address;
     }
 
-    public boolean isLogin()
+    public boolean isLoggedin()
     {
         return loggedin;
     }
 
     // setters
 
-    public void setAddress(String address) {
+    public void setAddress(String address)
+    {
         this.address = address;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber)
+    {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email)
+    {
         this.email = email;
     }
 
