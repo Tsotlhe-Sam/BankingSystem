@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public abstract class Account
     private List<Transaction>transactions = new ArrayList<>();
 
 
-    public Account(String accountNumber, String branch,Customer owner)
+    public Account(String accountNumber, String branch, Customer owner)
     {
         if (accountNumber == null || accountNumber.isBlank())
         {
@@ -24,7 +26,7 @@ public abstract class Account
         this.branch = branch;
         this.owner = owner;
 
-        owner.addaccount(this);
+        owner.addAccount(this);
     }
 
     public void deposit(double amount, String  reference)
@@ -41,6 +43,12 @@ public abstract class Account
 
     }
 
+    //  deposit without a reference uses "Deposit" as the default
+    public void deposit(double amount)
+    {
+        deposit(amount, "Deposit");
+    }
+
     public void withdraw(double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Enter a valid amount");
@@ -52,7 +60,7 @@ public abstract class Account
         balance = Math.round((balance - amount) * 100.0) / 100.0;
         transactions.add(new Transaction("withdrawal", amount, "Withdrawal", balance));
     }
-    // only InterestPayment uses this, so there's no "public"
+    // only model.InterestPayment uses this, so there's no "public"
     void creditInterest(double amount, String paymentID)
     {
         balance = Math.round((balance + amount) * 100.0) / 100.0;
@@ -81,13 +89,13 @@ public abstract class Account
         return balance;
     }
 
-    // a method that makes no other class to change  history
+
     public List<Transaction>getTransactions()
     {
         return new ArrayList<>(transactions);
 
     }
-    // 2 account object are the same account they have the same number
+
     @Override
     public boolean equals(Object o)
     {

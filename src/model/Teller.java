@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,13 +55,13 @@ public class Teller extends User
         checkLoggedIn();
         if (customer == null)
         {
-            throw new IllegalArgumentException("Customer cannot be empty");
+            throw new IllegalArgumentException("model.Customer cannot be empty");
         }
         for (Customer c : allCustomers)
         {
             if (c.getCustomerNumber().equals(customer.getCustomerNumber()))
             {
-                throw new IllegalArgumentException("Customer " + customer.getCustomerNumber() + " is already registered");
+                throw new IllegalArgumentException("model.Customer " + customer.getCustomerNumber() + " is already registered");
             }
         }
         allCustomers.add(customer);
@@ -110,7 +112,7 @@ public class Teller extends User
     {
         if (owner == null || !allCustomers.contains(owner))
         {
-            throw new IllegalArgumentException("Customer must be registered before opening an account");
+            throw new IllegalArgumentException("model.Customer must be registered before opening an account");
         }
     }
 
@@ -131,6 +133,33 @@ public class Teller extends User
     {
         checkLoggedIn();
         account.withdraw(amount);
+    }
+
+
+    public Customer findCustomer(String customerNumber)
+    {
+        checkLoggedIn();
+        for (Customer c : allCustomers)
+        {
+            if (c.getCustomerNumber().equalsIgnoreCase(customerNumber))
+            {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public Account findAccount(String accountNumber)
+    {
+        checkLoggedIn();
+        for (Account a : allAccounts)
+        {
+            if (a.getAccountNumber().equals(accountNumber))
+            {
+                return a;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +16,9 @@ import java.util.List;
         {
             if (!isLoggedin())
             {
-                throw new IllegalStateException("Manager must be logged in first");
+                throw new IllegalStateException("model.Manager must be logged in first");
             }
-            return new ArrayList<>(allAccounts);
+            return new ArrayList<>(Teller.allAccounts);
         }
 
         @Override

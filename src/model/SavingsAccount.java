@@ -1,3 +1,5 @@
+package model;
+
 public class SavingsAccount extends Account implements InterestBearing
 {
     private final double interestRate = 0.0005; // 0.05 % per month
@@ -12,7 +14,7 @@ public class SavingsAccount extends Account implements InterestBearing
     {
         throw new UnsupportedOperationException("Withdrawals are not allowed from a Savings account");
     }
-    //from InterestBearing : this month's interest on the current  balance
+    //from model.InterestBearing : this month's interest on the current  balance
     @Override
     public double calculateInterest()
     {

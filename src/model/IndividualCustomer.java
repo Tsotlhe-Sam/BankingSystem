@@ -1,3 +1,5 @@
+package model;
+
 public class IndividualCustomer extends Customer
 {
     private String firstName;
@@ -29,7 +31,7 @@ public class IndividualCustomer extends Customer
     @Override
     public String getDisplayName()
     {
-        return firstName + "  " + surname;
+        return firstName + " " + surname;
     }
 
     public boolean isEmployed()

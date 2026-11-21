@@ -1,3 +1,5 @@
+package model;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -59,9 +61,9 @@ public class Transaction
         return timestamp;
     }
 
-    public String getDetail()
+    public String getDetails()
     {
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("vvvv-MM-dd HH:mm;ss");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm;ss");
         return timestamp.format(format)
                 + "  |  " + type
                 + "  |  " + reference
@@ -72,6 +74,6 @@ public class Transaction
     @Override
     public String toString()
     {
-        return "Transaction[" + transactionID + "," + type +", "+ amount + "]";
+        return "model.Transaction[" + transactionID + "," + type +", "+ amount + "]";
     }
 }

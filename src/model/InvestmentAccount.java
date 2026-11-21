@@ -1,3 +1,5 @@
+package model;
+
 public class InvestmentAccount extends Account implements InterestBearing {
     private final double interestRate = 0.05; // 5% per month
     private final double minDeposit = 500.00; // minimum deposit when opening Investment Acc
@@ -17,7 +19,7 @@ public class InvestmentAccount extends Account implements InterestBearing {
         }
         return owner;
     }
-    //from InterestBearing: 5% of the current balance
+    //from model.InterestBearing: 5% of the current balance
     @Override
     public double calculateInterest()
     {
