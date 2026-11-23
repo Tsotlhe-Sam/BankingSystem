@@ -96,6 +96,16 @@ public abstract class Account
 
     }
 
+    public void restoreBalance(double savedBalance)
+    {
+        this.balance = savedBalance;
+    }
+
+    public void restoreTransaction(Transaction t)
+    {
+        transactions.add(t);
+    }
+
     @Override
     public boolean equals(Object o)
     {

@@ -10,6 +10,11 @@ public class InvestmentAccount extends Account implements InterestBearing {
         deposit(openingDeposit, "Opening deposit");
     }
 
+    public InvestmentAccount(String accountNumber, String branch, Customer owner)
+    {
+        super(accountNumber, branch, owner);
+    }
+
 
     private static Customer checkOpeningDeposit(Customer owner, double openingDeposit)
     {

@@ -78,6 +78,17 @@ public abstract class User
         return loggedin;
     }
 
+
+    public String getPasswordHash()
+    {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String hash)
+    {
+        this.passwordHash = hash;
+    }
+
     // setters
 
     public void setAddress(String address)

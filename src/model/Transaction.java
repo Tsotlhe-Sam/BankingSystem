@@ -31,6 +31,17 @@ public class Transaction
         this.timestamp = LocalDateTime.now();
     }
 
+    public Transaction(String transactionID, String type, double amount, String reference,
+                       double balanceAfter, LocalDateTime timestamp)
+    {
+        this.transactionID = transactionID;
+        this.type = type;
+        this.amount = amount;
+        this.reference = reference;
+        this.balanceAfter = balanceAfter;
+        this.timestamp = timestamp;
+    }
+
     public String getTransactionID()
     {
         return transactionID;

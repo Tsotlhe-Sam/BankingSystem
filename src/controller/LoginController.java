@@ -16,6 +16,14 @@ import java.util.List;
         staff.add(member);
     }
 
+    public void addDefaultStaff()
+    {
+        addStaff(new Teller("U100", "teller", "teller123", "teller@bank.co.bw", "3901234",
+                "Gaborone", "E001", "Main Mall", "Kabo", "Motse"));
+        addStaff(new Manager("U200", "manager", "manager123", "manager@bank.co.bw", "3905678",
+                "Palapye", "E002", "Main Mall", "Lorato", "Setlhare"));
+    }
+
     public Result login(String username, String password)
     {
         // 1. check the input
