@@ -8,6 +8,7 @@ import java.util.List;
 public class CustomerController
 {
     private final LoginController loginController;
+    private final dao.CustomerDAO customerDAO = new dao.CustomerDAO();
 
     public CustomerController(LoginController loginController)
     {
@@ -27,6 +28,7 @@ public class CustomerController
             IndividualCustomer customer = new IndividualCustomer("U" + clean(customerNumber),
                     clean(username), password, clean(email), clean(phone), clean(address),
                     clean(customerNumber), clean(firstName), clean(surname), clean(nationalID), employed);
+            customerDAO.insert(customer);
             loginController.getCurrentUser().registerCustomer(customer);
             return Result.ok("Registered " + customer.getDisplayName() + " as " + customer.getCustomerNumber());
         }
@@ -49,7 +51,9 @@ public class CustomerController
             CompanyCustomer customer = new CompanyCustomer("U" + clean(customerNumber),
                     clean(username), password, clean(email), clean(phone), clean(address),
                     clean(customerNumber), clean(companyName), clean(registrationNumber), clean(contactPerson));
+            customerDAO.insert(customer);
             loginController.getCurrentUser().registerCustomer(customer);
+
             return Result.ok("Registered " + customer.getDisplayName() + " as " + customer.getCustomerNumber());
         }
         catch (RuntimeException e)

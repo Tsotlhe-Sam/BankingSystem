@@ -9,7 +9,7 @@ import java.util.List;
 {
     private final List<Teller> staff = new ArrayList<>();
     private Teller currentUser;
-
+    private Customer currentCustomer;
 
     public void addStaff(Teller member)
     {
@@ -23,7 +23,6 @@ import java.util.List;
         addStaff(new Manager("U200", "manager", "manager123", "manager@bank.co.bw", "3905678",
                 "Palapye", "E002", "Main Mall", "Lorato", "Setlhare"));
     }
-
     public Result login(String username, String password)
     {
         // 1. check the input
@@ -31,8 +30,9 @@ import java.util.List;
         {
             return Result.fail("Enter your username and password");
         }
+        logout();
 
-        // 2. find the staff member and let the model check the password
+
         for (Teller member : staff)
         {
             if (member.getUsername().equalsIgnoreCase(username.trim()))
@@ -42,14 +42,20 @@ import java.util.List;
                     currentUser = member;
                     return Result.ok("Welcome, " + member.getFirstName() + " (" + member.getRole() + ")");
                 }
-                break;
+                return Result.fail("Incorrect username or password");
             }
         }
 
-        // same message either way, so nobody can guess which usernames exist
+        Customer customer = Teller.findCustomerByUsername(username.trim());
+        if (customer != null && customer.login(password))
+        {
+            currentCustomer = customer;
+            return Result.ok("Welcome, " + customer.getDisplayName() + " (Customer)");
+        }
+
+
         return Result.fail("Incorrect username or password");
     }
-
     public void logout()
     {
         if (currentUser != null)
@@ -57,8 +63,26 @@ import java.util.List;
             currentUser.logout();
             currentUser = null;
         }
+        if (currentCustomer != null)
+        {
+            currentCustomer.logout();
+            currentCustomer = null;
+        }
+    }
+    public boolean isCustomerLoggedIn()
+    {
+        return currentCustomer != null;
     }
 
+    Customer getCurrentCustomer()
+    {
+        return currentCustomer;
+    }
+
+    public String getCurrentCustomerName()
+    {
+        return (currentCustomer == null) ? "" : currentCustomer.getDisplayName();
+    }
     public boolean isLoggedIn()
     {
         return currentUser != null && currentUser.isLoggedin();

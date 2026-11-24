@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class InterestPayment
 {
-    // the states from the state diagram
+
     public static final String PENDING = "PENDING";
     public static final String CALCULATED = "CALCULATED";
     public static final String PAID = "PAID";
@@ -24,7 +24,7 @@ public class InterestPayment
         {
             throw new IllegalArgumentException("Interest payment needs an account");
         }
-        this.paymentID = String.format("IP%05d", counter++);
+        this.paymentID = "IP-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.account = account;
         this.status = PENDING;
     }

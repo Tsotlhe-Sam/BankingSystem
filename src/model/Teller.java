@@ -135,6 +135,40 @@ public class Teller extends User
         account.withdraw(amount);
     }
 
+    public static void restoreRecords(List<Customer> customers, List<Account> accounts)
+    {
+        allCustomers.clear();
+        allAccounts.clear();
+        allCustomers.addAll(customers);
+        allAccounts.addAll(accounts);
+        for (Account a : accounts)
+        {
+            try
+            {
+                int number = Integer.parseInt(a.getAccountNumber());
+                if (number >= nextAccountNumber)
+                {
+                    nextAccountNumber = number + 1;
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                // not a numeric account number: ignore
+            }
+        }
+    }
+    //LoginController so a registered customer can log in
+    public static Customer findCustomerByUsername(String username)
+    {
+        for (Customer c : allCustomers)
+        {
+            if (c.getUsername().equalsIgnoreCase(username))
+            {
+                return c;
+            }
+        }
+        return null;
+    }
 
     public Customer findCustomer(String customerNumber)
     {

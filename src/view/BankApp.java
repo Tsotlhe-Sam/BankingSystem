@@ -1,7 +1,9 @@
 package view;
 
 import controller.AccountController;
+import controller.CustomerAccountController;
 import controller.CustomerController;
+import controller.DataLoader;
 import controller.LoginController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,11 +21,10 @@ public class BankApp extends Application
     {
         stage = primaryStage;
 
-        // the controllers are created once and shared by every view
         loginController = new LoginController();
         customerController = new CustomerController(loginController);
         accountController = new AccountController(loginController, customerController);
-        loginController.addDefaultStaff();
+        DataLoader.loadAll(loginController);      // create tables, sample data, load records
 
         stage.setTitle("Banking System");
         showLogin();
@@ -38,6 +39,15 @@ public class BankApp extends Application
 
     private void showMain()
     {
+
+        if (loginController.isCustomerLoggedIn())
+        {
+            CustomerHomeView home = new CustomerHomeView(loginController,
+                    new CustomerAccountController(loginController), this::showLogin);
+            stage.setScene(new Scene(home.getView(), 700, 600));
+            return;
+        }
+
         MainView mainView = new MainView(loginController, customerController, accountController, this::showLogin);
         stage.setScene(new Scene(mainView.getView(), 760, 640));
     }

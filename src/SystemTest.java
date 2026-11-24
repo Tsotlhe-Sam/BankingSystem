@@ -8,6 +8,11 @@ public class SystemTest
 
     public static void main(String[] args)
     {
+        // the controllers now save to a database, so tests use their own file (real data stays safe)
+        new java.io.File("systemtest.db").delete();
+        dao.DataBase.useFile("systemtest.db");
+        dao.DataBase.createSchema();
+
         testModel();
         testControllers();
 
@@ -122,8 +127,12 @@ public class SystemTest
         check("Manager can see the account the teller opened", manager.viewAllAccounts().contains(opened));
     }
 
+    // =====================================================================
+    // PART B: CONTROLLERS (Part 6), used the way the GUI will use them
+    // =====================================================================
     private static void testControllers()
     {
+        Teller.restoreRecords(new java.util.ArrayList<>(), new java.util.ArrayList<>());   // fresh start, like opening the app
         LoginController login = new LoginController();
         CustomerController customers = new CustomerController(login);
         AccountController accounts = new AccountController(login, customers);
@@ -191,6 +200,9 @@ public class SystemTest
         check("Manager can view all accounts", !accounts.viewAllAccounts().isEmpty());
     }
 
+    // =====================================================================
+    // helpers
+    // =====================================================================
     private static void heading(String title)
     {
         System.out.println("\n--- " + title + " ---");
@@ -241,6 +253,7 @@ public class SystemTest
         return Math.abs(a - b) < 0.001;
     }
 
+    // pulls the account number out of "SAVINGS account 1000001 opened for ..."
     private static String number(Result r)
     {
         for (String word : r.getMessage().split(" "))

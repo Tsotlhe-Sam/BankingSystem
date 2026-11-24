@@ -18,7 +18,7 @@ public class LoginView
 
     public LoginView(LoginController loginController, Runnable onLoginSuccess)
     {
-        Label title = ViewHelper.heading("Banking System - staff Login");
+        Label title = ViewHelper.heading("Banking System");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");

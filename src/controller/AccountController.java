@@ -1,5 +1,4 @@
 package controller;
-
 import model.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,8 @@ public class AccountController
 {
     private final LoginController loginController;
     private final CustomerController customerController;
+    private final dao.AccountDAO accountDAO = new dao.AccountDAO();
+    private final dao.InterestPaymentDAO interestPaymentDAO = new dao.InterestPaymentDAO();
 
     public AccountController(LoginController loginController, CustomerController customerController)
     {
@@ -21,7 +22,6 @@ public class AccountController
         {
             return Result.fail("Please log in first");
         }
-
         Customer customer = customerController.find(customerNumber);
         if (customer == null)
         {
@@ -57,6 +57,7 @@ public class AccountController
                 double deposit = parseOptionalAmount(openingDepositText);
                 account = teller.openAccount(customer, type, deposit);
             }
+            accountDAO.insert(account);
 
             return Result.ok(type.toUpperCase() + " account " + account.getAccountNumber()
                     + " opened for " + customer.getDisplayName());
@@ -81,6 +82,7 @@ public class AccountController
         Account account = findAccountOrFail(accountNumber);
         double amount = parseAmount(amountText);
         loginController.getCurrentUser().processDeposit(account, amount);
+        accountDAO.recordTransaction(account, lastTransaction(account));
         return Result.ok(String.format("Deposited BWP %.2f. New balance: BWP %.2f",
                 amount, account.getBalance()));
     }
@@ -105,6 +107,7 @@ public class AccountController
         Account account = findAccountOrFail(accountNumber);
         double amount = parseAmount(amountText);
         loginController.getCurrentUser().processWithdraw(account, amount);
+        accountDAO.recordTransaction(account, lastTransaction(account));
         return Result.ok(String.format("Withdrew BWP %.2f. New balance: BWP %.2f",
                 amount, account.getBalance()));
     }
@@ -166,37 +169,46 @@ public class AccountController
     }
     return lines;
   }
-   public Result payMonthlyInterest()
-   {
-    if (!loginController.isLoggedIn())
+    public Result payMonthlyInterest()
     {
-        return Result.fail("Please log in first");
-    }
-    if (!loginController.isManager())
-    {
-        return Result.fail("Only a Manager can pay monthly interest");
-    }
-
-    Manager manager = (Manager) loginController.getCurrentUser();
-    int paid = 0;
-    double total = 0;
-
-    for (Account a : manager.viewAllAccounts())
-    {
-        InterestPayment payment = new InterestPayment(a);
-        if (payment.checkEligibility())
+        if (!loginController.isLoggedIn())
         {
-            payment.calculateAmount();
-            payment.creditAccount();
-            if (payment.getStatus().equals(InterestPayment.PAID))
+            return Result.fail("Please log in first");
+        }
+        if (!loginController.isManager())
+        {
+            return Result.fail("Only a Manager can pay monthly interest");
+        }
+
+        Manager manager = (Manager) loginController.getCurrentUser();
+        int paid = 0;
+        double total = 0;
+
+        try
+        {
+            for (Account a : manager.viewAllAccounts())
             {
-                paid++;
-                total += payment.getAmount();
+                InterestPayment payment = new InterestPayment(a);
+                if (payment.checkEligibility())
+                {
+                    payment.calculateAmount();
+                    payment.creditAccount();
+                    if (payment.getStatus().equals(InterestPayment.PAID))
+                    {
+                        paid++;
+                        total += payment.getAmount();
+                        accountDAO.recordTransaction(a, lastTransaction(a));   // save new balance + "Interest" record
+                    }
+                }
+                interestPaymentDAO.insert(payment);                             // PAID or REJECTED, both are recorded
             }
         }
+        catch (RuntimeException e)
+        {
+            return Result.fail("Interest run stopped: " + e.getMessage());
+        }
+        return Result.ok(String.format("Interest paid to %d account(s), total BWP %.2f", paid, total));
     }
-    return Result.ok(String.format("Interest paid to %d account(s), total BWP %.2f", paid, total));
-   }
 
 
 private Account findAccountOrFail(String accountNumber)
@@ -212,8 +224,11 @@ private Account findAccountOrFail(String accountNumber)
     }
     return account;
 }
-
-// text from a TextField -> a positive number
+    private static Transaction lastTransaction(Account account)
+    {
+        List<Transaction> history = account.getTransactions();
+        return history.get(history.size() - 1);
+    }
 private static double parseAmount(String text)
 {
     if (text == null || text.isBlank())
